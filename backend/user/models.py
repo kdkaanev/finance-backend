@@ -101,8 +101,6 @@ class FinanceUserManager(BaseUserManager):
         return self.none()
 
 
-auth_models.AbstractUser
-
 class FinanceUser(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     """
     Custom user model that extends the default Django user model.
