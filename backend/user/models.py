@@ -124,3 +124,29 @@ class FinanceUser(auth_models.AbstractBaseUser, auth_models.PermissionsMixin):
     USERNAME_FIELD = "email"
     objects = FinanceUserManager()
 
+class Profile(models.Model):
+    MAX_FIRST_NAME_LENGTH = 30
+    MAX_LAST_NAME_LENGTH = 30
+    """
+    Profile model that extends the FinanceUser model.
+    """
+
+    first_name = models.CharField(
+        max_length= MAX_FIRST_NAME_LENGTH,
+        blank=True,
+        null=True,
+    )
+    last_name = models.CharField(
+        max_length=MAX_LAST_NAME_LENGTH,
+        blank=True,
+        null=True,)
+    user = models.OneToOneField(
+        FinanceUser,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+
+    def __str__(self):
+        return f"{self.user.email}'s Profile"
+
+
