@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'backend.core',  # Your custom app
-    'backend.back_end',  # Your custom app
+    'backend.back_end',# Your custom app
+    'backend.user',  # Custom user app
+    'backend.core',  # Core app for common functionality
+
 
 
 ]
@@ -106,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_USER_MODEL = 'user.FinanceUser'  # Custom user model
 
 
 # Internationalization
