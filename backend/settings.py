@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'backend.user',  # Custom user app
-    'backend.core',  # Core app for common functionality
+    'backend.core_app',  # Core app for common functionality
 
 
 

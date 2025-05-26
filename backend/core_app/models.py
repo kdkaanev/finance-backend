@@ -31,6 +31,7 @@ class Transactions(models.Model):
         return f"{self.name} "
 
 
+
 class Budget(models.Model):
     category = models.CharField(max_length=60, choices=CATEGORY_CHOICES)
     maximum = models.DecimalField(

@@ -18,6 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path('', include('backend.core_app.urls')),  # Core app API endpoints
     path('admin/', admin.site.urls),
     path('user/', include('backend.user.urls')),
+
+
+
+
 ]
