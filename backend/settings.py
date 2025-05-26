@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'backend.back_end',# Your custom app
     'backend.user',  # Custom user app
     'backend.core',  # Core app for common functionality
 
