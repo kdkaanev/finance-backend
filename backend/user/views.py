@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 from backend.user.models import FinanceUser
+from backend.user.serializers import ProfileSerializer
 
 
 def get_csrf_token(request):
@@ -48,8 +49,8 @@ class SignUpView(APIView):
 class SignInView(APIView):
     permission_classes = [AllowAny]
 
-    @staticmethod
-    def post(request):
+
+    def post( self,request):
         email = request.data.get("email")
         password = request.data.get("password")
 
@@ -102,3 +103,37 @@ class SignOutView(APIView):
         response.delete_cookie("sessionid", path="/", domain=None)
         response.delete_cookie("csrftoken", path="/", domain=None)
         return response
+
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+
+
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        finance_user = getattr(user, "finance_user", None)
+        finance_user_data = ProfileSerializer(finance_user).data if finance_user else None
+        response_data = {
+            "id": user.id,
+            "email": user.email,
+            "finance_user": finance_user_data
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+    def patch(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        serializer = ProfileSerializer(user.finance_user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
