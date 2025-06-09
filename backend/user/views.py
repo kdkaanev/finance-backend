@@ -71,7 +71,7 @@ class SignInView(APIView):
 
         # Return response
         response = Response({
-
+            "email": user.email,
             "message": "Login successful"
         }, status=status.HTTP_200_OK)
 
