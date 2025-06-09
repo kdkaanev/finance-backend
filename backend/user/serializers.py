@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from backend.user.models import FinanceUser
+from backend.user.models import FinanceUser, Profile
 
 
 class FinanceUserSerializer(serializers.ModelSerializer):
@@ -10,6 +10,5 @@ class FinanceUserSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FinanceUser
-        fields = ('email', 'first_name', 'last_name', 'date_joined', 'last_login')
-        read_only_fields = ('email', 'date_joined', 'last_login')
+        model = Profile
+        fields = ('first_name', 'last_name',)

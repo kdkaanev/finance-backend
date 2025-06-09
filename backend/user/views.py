@@ -68,11 +68,24 @@ class SignInView(APIView):
 
         # Get related DogUser instance (if exists)
 
+        profile = getattr(user, "profile", None)
+        finance_user_data = ProfileSerializer(profile).data if profile else None
+        if profile:
+            finance_user_data = {
 
+                "first_name": profile.first_name,
+                "last_name": profile.last_name,
+
+            }
+        else:
+            finance_user_data = None
         # Return response
         response = Response({
+            "id": user.id,
             "email": user.email,
-            "message": "Login successful"
+            "message": "Login successful",
+            "finance_user": finance_user_data
+
         }, status=status.HTTP_200_OK)
 
         # Set CSRF token as a cookie
@@ -115,12 +128,12 @@ class CurrentUserView(APIView):
         if not user.is_authenticated:
             return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        finance_user = getattr(user, "finance_user", None)
-        finance_user_data = ProfileSerializer(finance_user).data if finance_user else None
+        profile = getattr(user, "profile", None)
+        finance_user_data = ProfileSerializer(profile).data if profile else None
         response_data = {
             "id": user.id,
             "email": user.email,
-            "finance_user": finance_user_data
+            "profile": finance_user_data
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -130,7 +143,7 @@ class CurrentUserView(APIView):
         if not user.is_authenticated:
             return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        serializer = ProfileSerializer(user.finance_user, data=request.data, partial=True)
+        serializer = ProfileSerializer(user.profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
