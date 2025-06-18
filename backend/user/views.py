@@ -7,11 +7,12 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from django.middleware.csrf import get_token
 from rest_framework import status
+from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-
+from django.db import IntegrityError
 from backend.user.models import FinanceUser
 from backend.user.serializers import ProfileSerializer
 
@@ -23,25 +24,43 @@ def get_csrf_token(request):
 class SignUpView(APIView):
     permission_classes = [AllowAny]
 
-    @staticmethod
-    def post(request):
+    def post(self, request):
         password = request.data.get("password")
         email = request.data.get("email")
 
-        user = FinanceUser.objects.create_user(password=password, email=email)
-        login(request, user)
-        # Create a token for the user
-        csrf_token = get_token(request)
-        response = Response({
-            "message": "User created and logged in successfully"
-        }, status=status.HTTP_201_CREATED)
+        if not email or not password:
+            return Response(
+                {"error": "Email and password are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        # Set CSRF cookie
+        if FinanceUser.objects.filter(email=email).exists():
+            return Response(
+                {"email": ["Email is already in use."]},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = FinanceUser.objects.create_user(email=email, password=password)
+        except IntegrityError:
+            return Response(
+                {"error": "Could not create user due to a database error."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        login(request, user)
+
+        csrf_token = get_token(request)
+        response = Response(
+            {"message": "User created and logged in successfully"},
+            status=status.HTTP_201_CREATED
+        )
+
         response.set_cookie(
             key="csrftoken",
             value=csrf_token,
-            httponly=False,  # Allow frontend JS to read the CSRF token
-            secure=False,  # Set to True in production with HTTPS
+            httponly=False,
+            secure=False,  # Set to True with HTTPS
             samesite="Lax"
         )
 
