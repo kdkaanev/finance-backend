@@ -84,7 +84,7 @@ class SignInView(APIView):
             "id": user.id,
             "email": user.email,
             "message": "Login successful",
-            "finance_user": finance_user_data
+            "profile": finance_user_data
 
         }, status=status.HTTP_200_OK)
 
