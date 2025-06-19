@@ -5,6 +5,8 @@ from rest_framework.routers import DefaultRouter
 from backend.user.views import SignInView, SignOutView, SignUpView, get_csrf_token, CurrentUserView
 
 router = DefaultRouter()
+# Registering the viewsets with the router
+
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name="signup"),
