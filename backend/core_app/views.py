@@ -22,6 +22,9 @@ class TransactionsViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'put', 'delete']
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class BudgetViewSet(ModelViewSet):
     queryset = Budget.objects.all()

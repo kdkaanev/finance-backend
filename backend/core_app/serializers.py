@@ -5,7 +5,10 @@ from backend.core_app.models import Transactions, Budget, Pots
 class TransactionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transactions
-        fields = '__all__'
+        fields = (
+            'id','avatar', 'name', 'type', 'category','amount', 'date', 'is_recurring',
+        )
+        read_only_fields = ('user',)
 
 
 class BudgetSerializer(serializers.ModelSerializer):
