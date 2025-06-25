@@ -1,7 +1,7 @@
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from rest_framework import permissions
+from rest_framework import permissions, request
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
@@ -12,15 +12,23 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from backend.core_app.models import Transactions, Budget, Pots
 from backend.core_app.serializers import TransactionsSerializer, BudgetSerializer, PotsSerializer
 
+
+
+
 @ensure_csrf_cookie
 def get_csrf_token(request):
     return JsonResponse({"csrfToken": get_token(request)})
 
+
+
 class TransactionsViewSet(ModelViewSet):
-    queryset = Transactions.objects.all()
     serializer_class = TransactionsSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'put', 'delete']
+
+    def get_queryset(self):
+        user = self.request.user
+        return Transactions.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
