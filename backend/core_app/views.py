@@ -24,7 +24,7 @@ def get_csrf_token(request):
 class TransactionsViewSet(ModelViewSet):
     serializer_class = TransactionsSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ['get', 'post','patch', 'delete']
 
     def get_queryset(self):
         user = self.request.user
